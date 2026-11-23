@@ -387,11 +387,13 @@ window.CNScene3D = (function () {
           const dL = Math.hypot((vec.x - 0.31) / 0.20, (vec.y - 0.14) / 0.155);
           vec.z -= (Math.exp(-dR * dR * 1.55) + Math.exp(-dL * dL * 1.55)) * 0.16;
         }
-        // Chin prominence and soft mentolabial sulcus
-        if (vec.z > 0.4 && Math.abs(vec.x) < 0.32) {
-          const cx = Math.exp(-Math.pow(vec.x / 0.17, 2));
-          vec.z += cx * Math.exp(-Math.pow((vec.y + 0.80) / 0.09, 2)) * 0.045;
-          vec.z -= cx * Math.exp(-Math.pow((vec.y + 0.67) / 0.04, 2)) * 0.012;
+        // Chin: forward mental protuberance, a little downward length, soft mentolabial sulcus
+        if (vec.z > 0.2 && Math.abs(vec.x) < 0.45) {
+          const cx = Math.exp(-Math.pow(vec.x / 0.27, 2));
+          const chin = cx * Math.exp(-Math.pow((vec.y + 0.80) / 0.15, 2));
+          vec.z += chin * 0.21;
+          vec.y -= chin * 0.05;
+          vec.z -= cx * Math.exp(-Math.pow((vec.y + 0.66) / 0.04, 2)) * 0.015;
         }
         // Philtrum / upper-lip fullness (gentle forward roll above the mouth)
         if (vec.z > 0.4 && Math.abs(vec.x) < 0.25) {
