@@ -472,23 +472,33 @@ window.CNScene3D = (function () {
       const np = noseGeo.attributes.position;
       for (let i = 0; i < np.count; i++) {
         v.fromBufferAttribute(np, i);
-        const t = (1 - v.y) / 2; // 0 = root between the eyes, 1 = base above the lip
-        const y = 0.19 - 0.375 * Math.pow(t, 0.62);
-        const halfW = 0.036 + 0.080 * Math.pow(t, 1.25);
-        const tipBulb = Math.exp(-Math.pow((t - 0.55) / 0.16, 2));
-        const proj = 0.05 + 0.24 * Math.pow(t, 1.15) + tipBulb * 0.03;
-        const x = v.x * halfW * (1 + tipBulb * 0.12);
-        const z = v.z > 0 ? 0.86 + v.z * proj : 0.86 + v.z * 0.06;
+        // u = 0 at the root between the eyes, 1 at the base above the lip. Each ring gets an
+        // explicit half-width (ax) and projection (az): a straight dorsum rising to the tip,
+        // then an elliptical underside that closes back into the face.
+        const u = (1 - v.y) / 2;
+        const ring = Math.sqrt(Math.max(0, 1 - v.y * v.y));
+        const uTip = 0.72, tipProj = 0.30;
+        const under = u > uTip ? Math.sqrt(Math.max(0, 1 - Math.pow((u - uTip) / (1 - uTip), 2))) : 1;
+        const tipBulb = Math.exp(-Math.pow((u - 0.78) / 0.10, 2));
+        // Soft minimum of the straight dorsum line and the rounded underside -> rounded tip
+        const dorsum = 0.035 + (tipProj - 0.035) * (u / 0.84);
+        const kS = 0.035;
+        const az = -kS * Math.log(Math.exp(-dorsum / kS) + Math.exp(-(tipProj * under) / kS)) + tipBulb * 0.012;
+        const ax = (0.040 + 0.045 * u + tipBulb * 0.030) * Math.sqrt(under);
+        const y = 0.20 - 0.42 * u;
+        const k = ring > 1e-4 ? 1 / ring : 0;
+        const x = v.x * k * ax;
+        const z = v.z > 0 ? 0.86 + v.z * k * az : 0.86 + v.z * k * 0.06;
         np.setXYZ(i, x, y, z);
       }
       noseGeo.computeVertexNormals();
       const noseMesh = new THREE.Mesh(noseGeo, skinMat);
       noseMesh.castShadow = true;
       noseGroup.add(noseMesh);
-      const alaGeo = new THREE.SphereGeometry(0.052, 20, 16);
+      const alaGeo = new THREE.SphereGeometry(0.056, 20, 16);
       alaGeo.scale(0.85, 0.75, 1.0);
       const alaR = new THREE.Mesh(alaGeo, skinMat);
-      alaR.position.set(-0.080, -0.135, 0.90);
+      alaR.position.set(-0.088, -0.168, 0.915);
       const alaL = alaR.clone();
       alaL.position.x = 0.068;
       noseGroup.add(alaR, alaL);
@@ -499,7 +509,7 @@ window.CNScene3D = (function () {
       nostrilGeo.scale(1.15, 0.35, 0.75);
       [-1, 1].forEach((sgn) => {
         const n = new THREE.Mesh(nostrilGeo, nostrilMat);
-        n.position.set(sgn * 0.044, -0.165, 1.0);
+        n.position.set(sgn * 0.046, -0.192, 1.0);
         n.rotation.y = sgn * 0.5;
         noseGroup.add(n);
       });
