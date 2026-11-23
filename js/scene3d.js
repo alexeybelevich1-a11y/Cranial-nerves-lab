@@ -1123,8 +1123,9 @@ window.CNScene3D = (function () {
         new THREE.CylinderGeometry(0.030, 0.034, 0.70, 16),
         new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.7, roughness: 0.25 })
       );
+      // lookAt() aims the group's +Z at the eye: handle trails behind (-Z), beam projects forward (+Z)
       body.rotation.x = Math.PI / 2;
-      body.position.z = 0.35;
+      body.position.z = -0.35;
       const bulb = new THREE.Mesh(
         new THREE.SphereGeometry(0.030, 16, 12),
         new THREE.MeshBasicMaterial({ color: 0xfef9c3 })
@@ -1139,8 +1140,8 @@ window.CNScene3D = (function () {
           depthWrite: false
         })
       );
-      beamCone.rotation.x = Math.PI / 2;
-      beamCone.position.z = -0.66;
+      beamCone.rotation.x = -Math.PI / 2; // apex at the bulb, widening toward the patient
+      beamCone.position.z = 0.66;
       this.penlightBeam = beamCone;
       this.penlightGroup.add(body, bulb, beamCone);
       this.penlightGroup.visible = false;
