@@ -473,10 +473,10 @@ window.CNScene3D = (function () {
       for (let i = 0; i < np.count; i++) {
         v.fromBufferAttribute(np, i);
         const t = (1 - v.y) / 2; // 0 = root between the eyes, 1 = base above the lip
-        const y = 0.17 - 0.33 * Math.pow(t, 0.62);
-        const halfW = 0.030 + 0.062 * Math.pow(t, 1.25);
+        const y = 0.19 - 0.375 * Math.pow(t, 0.62);
+        const halfW = 0.036 + 0.080 * Math.pow(t, 1.25);
         const tipBulb = Math.exp(-Math.pow((t - 0.55) / 0.16, 2));
-        const proj = 0.04 + 0.17 * Math.pow(t, 1.15) + tipBulb * 0.02;
+        const proj = 0.05 + 0.24 * Math.pow(t, 1.15) + tipBulb * 0.03;
         const x = v.x * halfW * (1 + tipBulb * 0.12);
         const z = v.z > 0 ? 0.86 + v.z * proj : 0.86 + v.z * 0.06;
         np.setXYZ(i, x, y, z);
@@ -485,21 +485,21 @@ window.CNScene3D = (function () {
       const noseMesh = new THREE.Mesh(noseGeo, skinMat);
       noseMesh.castShadow = true;
       noseGroup.add(noseMesh);
-      const alaGeo = new THREE.SphereGeometry(0.042, 20, 16);
+      const alaGeo = new THREE.SphereGeometry(0.052, 20, 16);
       alaGeo.scale(0.85, 0.75, 1.0);
       const alaR = new THREE.Mesh(alaGeo, skinMat);
-      alaR.position.set(-0.064, -0.118, 0.89);
+      alaR.position.set(-0.080, -0.135, 0.90);
       const alaL = alaR.clone();
       alaL.position.x = 0.068;
       noseGroup.add(alaR, alaL);
       // Nostrils: small dark ovals on the underside
       const nostrilMat = new THREE.MeshStandardMaterial({ color: 0x4a2a22, roughness: 0.9, transparent: true, opacity: 1 });
       this.skinMaterials.push(nostrilMat);
-      const nostrilGeo = new THREE.SphereGeometry(0.02, 12, 8);
+      const nostrilGeo = new THREE.SphereGeometry(0.025, 12, 8);
       nostrilGeo.scale(1.15, 0.35, 0.75);
       [-1, 1].forEach((sgn) => {
         const n = new THREE.Mesh(nostrilGeo, nostrilMat);
-        n.position.set(sgn * 0.036, -0.145, 0.975);
+        n.position.set(sgn * 0.044, -0.165, 1.0);
         n.rotation.y = sgn * 0.5;
         noseGroup.add(n);
       });
