@@ -121,27 +121,29 @@ window.CNScene3D = (function () {
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.12;
+      this.renderer.toneMappingExposure = 1.0;
 
       this.container.innerHTML = '';
       this.container.appendChild(this.renderer.domElement);
     }
 
     _initLights() {
-      const hemi = new THREE.HemisphereLight(0xe0f2fe, 0x1e293b, 0.78);
+      const hemi = new THREE.HemisphereLight(0xfff6ee, 0x3b2a24, 0.62);
       this.scene.add(hemi);
 
-      const key = new THREE.DirectionalLight(0xfff7ed, 1.08);
+      const key = new THREE.DirectionalLight(0xfff1e2, 1.22);
       key.position.set(2.4, 3.4, 4.6);
       key.castShadow = true;
       key.shadow.mapSize.set(1024, 1024);
+      key.shadow.bias = -0.0006;
+      key.shadow.normalBias = 0.02;
       this.scene.add(key);
 
-      const fill = new THREE.DirectionalLight(0x93c5fd, 0.45);
+      const fill = new THREE.DirectionalLight(0xffe6d5, 0.38);
       fill.position.set(-3.0, 1.4, 3.2);
       this.scene.add(fill);
 
-      const rim = new THREE.DirectionalLight(0x38bdf8, 0.50);
+      const rim = new THREE.DirectionalLight(0x7dd3fc, 0.32);
       rim.position.set(0, 2.2, -3.8);
       this.scene.add(rim);
 
@@ -234,6 +236,7 @@ window.CNScene3D = (function () {
     }
 
     _buildPatient() {
+      const SKIN_HEX = 0xd49c7c;
       this.patientRoot = new THREE.Group();
       this.scene.add(this.patientRoot);
 
@@ -243,7 +246,7 @@ window.CNScene3D = (function () {
       const headSkinMat = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         vertexColors: true,
-        roughness: 0.56,
+        roughness: 0.62,
         metalness: 0.03,
         transparent: true,
         opacity: 1.0
@@ -251,8 +254,8 @@ window.CNScene3D = (function () {
       this.skinMaterials.push(headSkinMat);
 
       const skinMat = new THREE.MeshStandardMaterial({
-        color: 0xe6bc9c,
-        roughness: 0.56,
+        color: SKIN_HEX,
+        roughness: 0.62,
         metalness: 0.03,
         transparent: true,
         opacity: 1.0
@@ -260,8 +263,8 @@ window.CNScene3D = (function () {
       this.skinMaterials.push(skinMat);
 
       const lipMat = new THREE.MeshStandardMaterial({
-        color: 0xc97b74,
-        roughness: 0.42,
+        color: 0xa95a52,
+        roughness: 0.48,
         metalness: 0.02,
         transparent: true,
         opacity: 1.0
@@ -269,7 +272,7 @@ window.CNScene3D = (function () {
       this.skinMaterials.push(lipMat);
 
       const hairMat = new THREE.MeshStandardMaterial({
-        color: 0x2c221d,
+        color: 0x3a2a20,
         roughness: 0.84,
         transparent: true,
         opacity: 1.0
@@ -301,7 +304,7 @@ window.CNScene3D = (function () {
       const rShMesh = new THREE.Mesh(new THREE.SphereGeometry(0.40, 24, 20), scrubMat);
       rShMesh.scale.set(1.24, 0.76, 0.90);
       this.rightShoulder.add(rShMesh);
-      this.rightTrapMat = new THREE.MeshStandardMaterial({ color: 0xdeb292, roughness: 0.58, transparent: true, opacity: 1 });
+      this.rightTrapMat = new THREE.MeshStandardMaterial({ color: SKIN_HEX, roughness: 0.62, transparent: true, opacity: 1 });
       this.skinMaterials.push(this.rightTrapMat);
       const rTrap = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.27, 0.70, 16), this.rightTrapMat);
       rTrap.position.set(0.42, 0.14, -0.04);
@@ -315,7 +318,7 @@ window.CNScene3D = (function () {
       const lShMesh = new THREE.Mesh(new THREE.SphereGeometry(0.40, 24, 20), scrubMat);
       lShMesh.scale.set(1.24, 0.76, 0.90);
       this.leftShoulder.add(lShMesh);
-      this.leftTrapMat = new THREE.MeshStandardMaterial({ color: 0xdeb292, roughness: 0.58, transparent: true, opacity: 1 });
+      this.leftTrapMat = new THREE.MeshStandardMaterial({ color: SKIN_HEX, roughness: 0.62, transparent: true, opacity: 1 });
       this.skinMaterials.push(this.leftTrapMat);
       const lTrap = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.27, 0.70, 16), this.leftTrapMat);
       lTrap.position.set(-0.42, 0.14, -0.04);
@@ -328,8 +331,8 @@ window.CNScene3D = (function () {
       neckMesh.position.set(0, -1.00, -0.06);
       this.patientRoot.add(neckMesh);
 
-      this.rightSCMMat = new THREE.MeshStandardMaterial({ color: 0xd9ad8d, roughness: 0.54, transparent: true, opacity: 1 });
-      this.leftSCMMat = new THREE.MeshStandardMaterial({ color: 0xd9ad8d, roughness: 0.54, transparent: true, opacity: 1 });
+      this.rightSCMMat = new THREE.MeshStandardMaterial({ color: SKIN_HEX, roughness: 0.62, transparent: true, opacity: 1 });
+      this.leftSCMMat = new THREE.MeshStandardMaterial({ color: SKIN_HEX, roughness: 0.62, transparent: true, opacity: 1 });
       this.skinMaterials.push(this.rightSCMMat, this.leftSCMMat);
 
       this.rightSCM = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.072, 0.90, 14), this.rightSCMMat);
@@ -347,77 +350,103 @@ window.CNScene3D = (function () {
       this.headGroup.position.set(0, 0.20, 0);
       this.patientRoot.add(this.headGroup);
 
-      // Sculpted Cranium & Face Mesh with dark recessed oral cavity vertex coloring
-      const headGeo = new THREE.SphereGeometry(1.0, 72, 56);
-      const pos = headGeo.attributes.position;
-      const colors = new Float32Array(pos.count * 3);
-      const baseSkinColor = new THREE.Color(0xe6bc9c);
+      // Sculpted Cranium & Face Mesh. The oral cavity is a pocket pushed into the head; a skin
+      // "mouth cover" built from the un-recessed surface hides it and opens only between the lips.
+      const baseSkinColor = new THREE.Color(SKIN_HEX);
+      const blushColor = new THREE.Color(0xc77c68);
+      const shadeColor = new THREE.Color(0xa8705a);
       const darkOralColor = new THREE.Color(0x280910);
       const tmpColor = new THREE.Color();
       const v = new THREE.Vector3();
 
-      for (let i = 0; i < pos.count; i++) {
-        v.fromBufferAttribute(pos, i);
-        // Classic human head proportions
-        v.x *= 0.80;
-        v.y *= 1.04;
-        v.z *= 0.92;
-
-        // Taper jaw/chin cleanly below y = -0.10
-        if (v.y < -0.10) {
-          const t = Math.min(1, (-0.10 - v.y) / 0.92);
-          v.x *= (1 - t * 0.34);
-          if (v.z > 0) {
-            v.z *= (1 - t * 0.09);
-          }
+      // Deforms a unit-sphere vertex into the head shape; returns the oral-cavity darkness (0..1).
+      const sculpt = (vec, withOralPocket) => {
+        vec.x *= 0.80;
+        vec.y *= 1.04;
+        vec.z *= 0.92;
+        if (vec.y < -0.10) {
+          const t = Math.min(1, (-0.10 - vec.y) / 0.92);
+          vec.x *= (1 - t * 0.34);
+          if (vec.z > 0) vec.z *= (1 - t * 0.09);
         }
-        // Subtle temple flatness
-        if (Math.abs(v.x) > 0.62 && v.y > 0.05 && v.y < 0.62) {
-          v.x *= 0.965;
-        }
+        if (Math.abs(vec.x) > 0.62 && vec.y > 0.05 && vec.y < 0.62) vec.x *= 0.965;
         // Cheekbone fullness
-        if (v.z > 0.25 && v.y < 0.06 && v.y > -0.34 && Math.abs(v.x) > 0.30 && Math.abs(v.x) < 0.70) {
-          const zf = Math.exp(-Math.pow((v.y + 0.13) / 0.17, 2)) * Math.exp(-Math.pow((Math.abs(v.x) - 0.49) / 0.19, 2));
-          v.z += zf * 0.075;
-          v.x += Math.sign(v.x) * zf * 0.03;
+        if (vec.z > 0.25 && vec.y < 0.06 && vec.y > -0.34 && Math.abs(vec.x) > 0.30 && Math.abs(vec.x) < 0.70) {
+          const zf = Math.exp(-Math.pow((vec.y + 0.10) / 0.22, 2)) * Math.exp(-Math.pow((Math.abs(vec.x) - 0.47) / 0.20, 2));
+          vec.z += zf * 0.045;
+          vec.x += Math.sign(vec.x) * zf * 0.02;
         }
-        // Gentle supraorbital brow ridge
-        if (v.z > 0.40 && v.y > 0.24 && v.y < 0.48 && Math.abs(v.x) < 0.58) {
-          const bf = Math.exp(-Math.pow((v.y - 0.35) / 0.09, 2)) * Math.exp(-Math.pow(v.x / 0.48, 2));
-          v.z += bf * 0.052;
+        // Supraorbital brow ridge
+        if (vec.z > 0.40 && vec.y > 0.24 && vec.y < 0.48 && Math.abs(vec.x) < 0.58) {
+          const bf = Math.exp(-Math.pow((vec.y - 0.35) / 0.09, 2)) * Math.exp(-Math.pow(vec.x / 0.48, 2));
+          vec.z += bf * 0.052;
         }
-        // Sculpted ORBITAL SOCKETS centered at (±0.31, 0.14)
-        if (v.z > 0.35) {
-          const dR = Math.hypot((v.x + 0.31) / 0.20, (v.y - 0.14) / 0.155);
-          const dL = Math.hypot((v.x - 0.31) / 0.20, (v.y - 0.14) / 0.155);
-          const orbitDepth = Math.exp(-dR * dR * 1.55) + Math.exp(-dL * dL * 1.55);
-          v.z -= orbitDepth * 0.23;
+        // Orbital sockets centered at (±0.31, 0.14)
+        if (vec.z > 0.35) {
+          const dR = Math.hypot((vec.x + 0.31) / 0.20, (vec.y - 0.14) / 0.155);
+          const dL = Math.hypot((vec.x - 0.31) / 0.20, (vec.y - 0.14) / 0.155);
+          vec.z -= (Math.exp(-dR * dR * 1.55) + Math.exp(-dL * dL * 1.55)) * 0.16;
         }
-
-        // Deeply recessed ORAL CAVITY pocket behind the lips (y centered at -0.46)
-        // Pushes head wall back to z ~ 0.46 so soft palate, uvula, and tongue sit completely unobstructed!
-        let oralBlend = 0;
-        if (v.z > 0.40 && v.y < -0.26 && v.y > -0.70 && Math.abs(v.x) < 0.34) {
-          const om = Math.hypot(v.x / 0.21, (v.y + 0.48) / 0.14);
+        // Chin prominence and soft mentolabial sulcus
+        if (vec.z > 0.4 && Math.abs(vec.x) < 0.32) {
+          const cx = Math.exp(-Math.pow(vec.x / 0.17, 2));
+          vec.z += cx * Math.exp(-Math.pow((vec.y + 0.80) / 0.09, 2)) * 0.045;
+          vec.z -= cx * Math.exp(-Math.pow((vec.y + 0.67) / 0.04, 2)) * 0.012;
+        }
+        // Philtrum / upper-lip fullness (gentle forward roll above the mouth)
+        if (vec.z > 0.4 && Math.abs(vec.x) < 0.25) {
+          vec.z += Math.exp(-Math.pow(vec.x / 0.15, 2)) * Math.exp(-Math.pow((vec.y + 0.33) / 0.08, 2)) * 0.02;
+        }
+        let oral = 0;
+        if (withOralPocket && vec.z > 0.40 && vec.y < -0.26 && vec.y > -0.70 && Math.abs(vec.x) < 0.34) {
+          const om = Math.hypot(vec.x / 0.21, (vec.y + 0.48) / 0.14);
           if (om < 1.35) {
-            const depthFactor = Math.exp(-Math.pow(om, 2.6));
-            v.z -= depthFactor * 0.34;
-            oralBlend = THREE.MathUtils.clamp(Math.exp(-Math.pow(om / 0.85, 4.0)), 0, 1);
+            const fade = 1 - THREE.MathUtils.smoothstep(om, 0.8, 1.15);
+            vec.z -= Math.exp(-Math.pow(om, 2.6)) * 0.34 * fade;
+            oral = THREE.MathUtils.clamp(Math.exp(-Math.pow(om / 0.85, 4.0)), 0, 1);
           }
         }
+        return oral;
+      };
+      // Subtle natural skin variation: warmer cheeks/nose, slightly darker around the eyes.
+      const skinTone = (vec, out) => {
+        out.copy(baseSkinColor);
+        if (vec.z > 0.2) {
+          const ax = Math.abs(vec.x);
+          const cheek = Math.exp(-Math.pow((ax - 0.42) / 0.16, 2)) * Math.exp(-Math.pow((vec.y + 0.16) / 0.15, 2));
+          const chin = Math.exp(-Math.pow(vec.x / 0.16, 2)) * Math.exp(-Math.pow((vec.y + 0.80) / 0.10, 2));
+          out.lerp(blushColor, Math.min(0.45, cheek * 0.42 + chin * 0.18));
+          const orbit = Math.exp(-Math.pow(Math.hypot((ax - 0.31) / 0.24, (vec.y - 0.12) / 0.18), 2));
+          out.lerp(shadeColor, orbit * 0.30);
+        }
+        return out;
+      };
+      const buildHeadGeo = (withOralPocket) => {
+        const g = new THREE.SphereGeometry(1.0, 72, 56);
+        const gp = g.attributes.position;
+        const cols = new Float32Array(gp.count * 3);
+        for (let i = 0; i < gp.count; i++) {
+          v.fromBufferAttribute(gp, i);
+          const oral = sculpt(v, withOralPocket);
+          gp.setXYZ(i, v.x, v.y, v.z);
+          skinTone(v, tmpColor).lerp(darkOralColor, oral);
+          cols[i * 3] = tmpColor.r;
+          cols[i * 3 + 1] = tmpColor.g;
+          cols[i * 3 + 2] = tmpColor.b;
+        }
+        g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+        g.computeVertexNormals();
+        return g;
+      };
 
-        pos.setXYZ(i, v.x, v.y, v.z);
-        tmpColor.copy(baseSkinColor).lerp(darkOralColor, oralBlend);
-        colors[i * 3] = tmpColor.r;
-        colors[i * 3 + 1] = tmpColor.g;
-        colors[i * 3 + 2] = tmpColor.b;
-      }
-      headGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      headGeo.computeVertexNormals();
+      const headGeo = buildHeadGeo(true);
+      this.headSkinMat = headSkinMat;
       this.headMesh = new THREE.Mesh(headGeo, headSkinMat);
       this.headMesh.castShadow = true;
       this.headMesh.receiveShadow = true;
       this.headGroup.add(this.headMesh);
+      // Un-recessed copy (never rendered) used to build the closed-mouth skin cover.
+      this._smoothHeadGeo = buildHeadGeo(false);
 
       // === CLEAN HIGH-HAIRLINE CAP (Strictly above forehead y >= 0.68 in front! ZERO eye overlap!) ===
       const hairGeo = new THREE.SphereGeometry(1.018, 42, 24, 0, Math.PI * 2, 0, Math.PI * 0.40);
@@ -437,22 +466,43 @@ window.CNScene3D = (function () {
       hairMesh.position.set(0, 0.02, -0.02);
       this.headGroup.add(hairMesh);
 
-      // Sculpted Nose (proportional, seated neatly between orbital sockets and upper lip)
+      // Sculpted nose: one deformed sphere (narrow bridge widening to a rounded tip) plus soft alae.
       const noseGroup = new THREE.Group();
-      noseGroup.position.set(0, -0.01, 0.87);
-      const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.092, 0.34, 16), skinMat);
-      bridge.position.set(0, 0.04, 0.015);
-      bridge.rotation.x = -0.25;
-      noseGroup.add(bridge);
-      const noseTip = new THREE.Mesh(new THREE.SphereGeometry(0.092, 18, 14), skinMat);
-      noseTip.scale.set(1.05, 0.78, 0.92);
-      noseTip.position.set(0, -0.11, 0.072);
-      noseGroup.add(noseTip);
-      const alaR = new THREE.Mesh(new THREE.SphereGeometry(0.060, 12, 10), skinMat);
-      alaR.position.set(-0.076, -0.135, 0.02);
+      const noseGeo = new THREE.SphereGeometry(1, 40, 40);
+      const np = noseGeo.attributes.position;
+      for (let i = 0; i < np.count; i++) {
+        v.fromBufferAttribute(np, i);
+        const t = (1 - v.y) / 2; // 0 = root between the eyes, 1 = base above the lip
+        const y = 0.17 - 0.33 * Math.pow(t, 0.62);
+        const halfW = 0.030 + 0.062 * Math.pow(t, 1.25);
+        const tipBulb = Math.exp(-Math.pow((t - 0.55) / 0.16, 2));
+        const proj = 0.04 + 0.17 * Math.pow(t, 1.15) + tipBulb * 0.02;
+        const x = v.x * halfW * (1 + tipBulb * 0.12);
+        const z = v.z > 0 ? 0.86 + v.z * proj : 0.86 + v.z * 0.06;
+        np.setXYZ(i, x, y, z);
+      }
+      noseGeo.computeVertexNormals();
+      const noseMesh = new THREE.Mesh(noseGeo, skinMat);
+      noseMesh.castShadow = true;
+      noseGroup.add(noseMesh);
+      const alaGeo = new THREE.SphereGeometry(0.042, 20, 16);
+      alaGeo.scale(0.85, 0.75, 1.0);
+      const alaR = new THREE.Mesh(alaGeo, skinMat);
+      alaR.position.set(-0.064, -0.118, 0.89);
       const alaL = alaR.clone();
-      alaL.position.x = 0.076;
+      alaL.position.x = 0.068;
       noseGroup.add(alaR, alaL);
+      // Nostrils: small dark ovals on the underside
+      const nostrilMat = new THREE.MeshStandardMaterial({ color: 0x4a2a22, roughness: 0.9, transparent: true, opacity: 1 });
+      this.skinMaterials.push(nostrilMat);
+      const nostrilGeo = new THREE.SphereGeometry(0.02, 12, 8);
+      nostrilGeo.scale(1.15, 0.35, 0.75);
+      [-1, 1].forEach((sgn) => {
+        const n = new THREE.Mesh(nostrilGeo, nostrilMat);
+        n.position.set(sgn * 0.036, -0.145, 0.975);
+        n.rotation.y = sgn * 0.5;
+        noseGroup.add(n);
+      });
       this.headGroup.add(noseGroup);
 
       // Ears (CN VIII landmarks)
@@ -467,8 +517,10 @@ window.CNScene3D = (function () {
       this.headGroup.add(earR, earL);
 
       // === EYEBROWS & FOREHEAD WRINKLES (CN VII Forehead Sparing Test!) ===
-      this.rightBrow = this._createEyebrow(hairMat, -1);
-      this.leftBrow = this._createEyebrow(hairMat, 1);
+      const browMat = new THREE.MeshStandardMaterial({ color: 0x4a3426, roughness: 0.9, transparent: true, opacity: 1 });
+      this.skinMaterials.push(browMat);
+      this.rightBrow = this._createEyebrow(browMat, -1);
+      this.leftBrow = this._createEyebrow(browMat, 1);
       this.headGroup.add(this.rightBrow, this.leftBrow);
 
       this.rightWrinkles = this._createForeheadWrinkles(-1);
@@ -499,7 +551,9 @@ window.CNScene3D = (function () {
         new THREE.Vector3(sideSign * 0.47, 0.345, 0.765)
       ];
       const curve = new THREE.CatmullRomCurve3(pts);
-      const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 14, 0.024, 8, false), mat);
+      // Thicker at the head of the brow, tapering to a fine tail; flattened against the skin.
+      const profile = (u) => (1 - 0.65 * u) * (u < 0.08 ? 0.6 + 5 * u : 1);
+      const tube = new THREE.Mesh(this._shapedTube(curve, 24, 0.026, 10, profile, 0.35), mat);
       group.add(tube);
       return group;
     }
@@ -599,17 +653,17 @@ window.CNScene3D = (function () {
 
       const lashMat = new THREE.MeshStandardMaterial({ color: 0x1e1612, roughness: 0.85, transparent: true, opacity: 1 });
       this.skinMaterials.push(lashMat);
-      const upperLash = new THREE.Mesh(new THREE.TorusGeometry(lidRadius * 1.004, 0.0065, 8, 24, Math.PI), lashMat);
+      const upperLash = new THREE.Mesh(new THREE.TorusGeometry(lidRadius * 1.004, 0.0042, 8, 32, Math.PI), lashMat);
       upperLash.rotation.x = Math.PI / 2;
       upperLidPivot.add(upperLidMesh, upperLash);
-      upperLidPivot.rotation.x = -0.92; // Clean normal resting lid height!
+      upperLidPivot.rotation.x = -0.50; // Upper lid rests just over the top of the iris
       socket.add(upperLidPivot);
 
       const lowerLidPivot = new THREE.Group();
       const lowerLidGeo = new THREE.SphereGeometry(lidRadius * 0.99, 24, 12, 0, Math.PI * 2, Math.PI * 0.50, Math.PI * 0.48);
       const lowerLidMesh = new THREE.Mesh(lowerLidGeo, upperLidMat);
       lowerLidPivot.add(lowerLidMesh);
-      lowerLidPivot.rotation.x = 0.72; // Clean normal lower lid margin!
+      lowerLidPivot.rotation.x = 0.50; // Lower lid at the lower limbus
       socket.add(lowerLidPivot);
 
       // === 3D EXTRAOCULAR MUSCLES + TROCHLEA + OPTIC NERVE (X-Ray Layer!) ===
@@ -820,14 +874,9 @@ window.CNScene3D = (function () {
       this.lowerLipMesh = null;
       this.mouthCoverMat = skinMat;
 
-      // Soft curved patch tucked right behind closed lips so dark oral recess stays hidden until mouth opens
-      this.closedSlit = new THREE.Mesh(
-        new THREE.CircleGeometry(0.17, 24),
-        skinMat
-      );
-      this.closedSlit.scale.set(1.12, 0.42, 1);
-      this.closedSlit.position.set(0, -0.002, 0.035);
-      this.mouthGroup.add(this.closedSlit);
+      // Skin cover over the oral pocket, sampled from the un-recessed face so it blends seamlessly.
+      // Triangles between the lips are dropped as the mouth opens (see _updateMouthCover).
+      this._buildMouthCover();
 
       this._rebuildLips(0, 0, 0, 0, 0, 0);
 
@@ -847,6 +896,122 @@ window.CNScene3D = (function () {
       this.nlfRight = new THREE.Mesh(new THREE.TubeGeometry(nlfCurveR, 12, 0.009, 6, false), nlfMatR);
       this.nlfLeft = new THREE.Mesh(new THREE.TubeGeometry(nlfCurveL, 12, 0.009, 6, false), nlfMatL);
       this.headGroup.add(this.nlfRight, this.nlfLeft);
+    }
+
+    _buildMouthCover() {
+      const src = new THREE.Mesh(this._smoothHeadGeo, new THREE.MeshBasicMaterial());
+      src.updateMatrixWorld(true);
+      const srcPos = this._smoothHeadGeo.attributes.position;
+      const srcNrm = this._smoothHeadGeo.attributes.normal;
+      const srcCol = this._smoothHeadGeo.attributes.color;
+      const off = this.mouthGroup.position;
+      const NX = 96, NY = 68;
+      const x0 = -0.40, x1 = 0.40, y0 = -0.76, y1 = -0.20;
+      const ray = new THREE.Raycaster();
+      const dir = new THREE.Vector3(0, 0, -1);
+      const origin = new THREE.Vector3();
+      const tri = new THREE.Triangle();
+      const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), bary = new THREE.Vector3();
+      const positions = [], normals = [], colors = [], valid = [];
+      for (let j = 0; j <= NY; j++) {
+        for (let i = 0; i <= NX; i++) {
+          const x = x0 + (x1 - x0) * i / NX;
+          const y = y0 + (y1 - y0) * j / NY;
+          origin.set(x, y, 3);
+          ray.set(origin, dir);
+          const hit = ray.intersectObject(src, false)[0];
+          if (!hit) { positions.push(0, 0, 0); normals.push(0, 0, 1); colors.push(0, 0, 0); valid.push(false); continue; }
+          const f = hit.face;
+          a.fromBufferAttribute(srcPos, f.a); b.fromBufferAttribute(srcPos, f.b); c.fromBufferAttribute(srcPos, f.c);
+          tri.set(a, b, c).getBarycoord(hit.point, bary);
+          const n = new THREE.Vector3();
+          [[f.a, bary.x], [f.b, bary.y], [f.c, bary.z]].forEach(([k, w]) => {
+            n.x += srcNrm.getX(k) * w; n.y += srcNrm.getY(k) * w; n.z += srcNrm.getZ(k) * w;
+          });
+          n.normalize();
+          let cr = 0, cg = 0, cb = 0;
+          [[f.a, bary.x], [f.b, bary.y], [f.c, bary.z]].forEach(([k, w]) => {
+            cr += srcCol.getX(k) * w; cg += srcCol.getY(k) * w; cb += srcCol.getZ(k) * w;
+          });
+          positions.push(hit.point.x - off.x, hit.point.y - off.y, hit.point.z - off.z + 0.0015);
+          normals.push(n.x, n.y, n.z);
+          colors.push(cr, cg, cb);
+          // Keep an elliptical patch so its outline lies where the head is already un-recessed.
+          valid.push(Math.hypot(x / 0.38, (y + 0.48) / 0.27) < 1.0);
+        }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      // Candidate triangles (with their centroid in mouthGroup coords) for fast re-indexing.
+      const tris = [];
+      const idx = (i, j) => j * (NX + 1) + i;
+      for (let j = 0; j < NY; j++) {
+        for (let i = 0; i < NX; i++) {
+          const q = [idx(i, j), idx(i + 1, j), idx(i + 1, j + 1), idx(i, j + 1)];
+          if (!q.every((k) => valid[k])) continue;
+          [[q[0], q[1], q[2]], [q[0], q[2], q[3]]].forEach((t) => {
+            let cx = 0, cy = 0;
+            t.forEach((k) => { cx += positions[k * 3]; cy += positions[k * 3 + 1]; });
+            tris.push({ t, cx: cx / 3, cy: cy / 3 });
+          });
+        }
+      }
+      this._mouthCoverTris = tris;
+      this.mouthCover = new THREE.Mesh(geo, this.headSkinMat);
+      this.mouthCover.receiveShadow = true;
+      this.mouthCover.castShadow = true;
+      this.mouthGroup.add(this.mouthCover);
+      src.material.dispose();
+    }
+
+    // Opens a hole in the skin cover between the upper and lower lip curves.
+    _updateMouthCover(upperCurve, lowerCurve, rx, lx) {
+      if (!this.mouthCover) return;
+      const sample = (curve) => curve.getPoints(48);
+      const up = sample(upperCurve), lo = sample(lowerCurve);
+      const yAt = (pts, x) => {
+        for (let k = 0; k < pts.length - 1; k++) {
+          const p0 = pts[k], p1 = pts[k + 1];
+          if ((x >= p0.x && x <= p1.x) || (x <= p0.x && x >= p1.x)) {
+            const t = Math.abs(p1.x - p0.x) < 1e-6 ? 0 : (x - p0.x) / (p1.x - p0.x);
+            return p0.y + (p1.y - p0.y) * t;
+          }
+        }
+        return null;
+      };
+      const index = [];
+      for (const tr of this._mouthCoverTris) {
+        let inside = false;
+        if (tr.cx > rx && tr.cx < lx) {
+          const uy = yAt(up, tr.cx), ly = yAt(lo, tr.cx);
+          if (uy !== null && ly !== null && tr.cy < uy - 0.006 && tr.cy > ly + 0.006) inside = true;
+        }
+        if (!inside) index.push(tr.t[0], tr.t[1], tr.t[2]);
+      }
+      this.mouthCover.geometry.setIndex(index);
+    }
+
+    // Tube whose radius follows profile(u) (u = 0..1 along the curve); squash scales depth (z).
+    _shapedTube(curve, segments, radius, radial, profile, squashZ) {
+      const geo = new THREE.TubeGeometry(curve, segments, radius, radial, false);
+      const pos = geo.attributes.position;
+      const pt = new THREE.Vector3();
+      for (let i = 0; i <= segments; i++) {
+        const u = i / segments;
+        curve.getPointAt(u, pt);
+        const f = profile(u);
+        for (let j = 0; j <= radial; j++) {
+          const k = i * (radial + 1) + j;
+          const dx = (pos.getX(k) - pt.x) * f;
+          const dy = (pos.getY(k) - pt.y) * f;
+          const dz = (pos.getZ(k) - pt.z) * f * (squashZ || 1);
+          pos.setXYZ(k, pt.x + dx, pt.y + dy, pt.z + dz);
+        }
+      }
+      geo.computeVertexNormals();
+      return geo;
     }
 
     _rebuildLips(openAmt, smileR, smileL, droopR, droopL, jawDevX) {
@@ -875,7 +1040,8 @@ window.CNScene3D = (function () {
         new THREE.Vector3(lx, ly, 0.025)
       ];
       const upperCurve = new THREE.CatmullRomCurve3(upperPts);
-      this.upperLipMesh = new THREE.Mesh(new THREE.TubeGeometry(upperCurve, 22, 0.021, 10, false), this.lipMat);
+      const lipProfile = (u) => 0.22 + 0.78 * Math.pow(Math.sin(Math.PI * u), 0.75);
+      this.upperLipMesh = new THREE.Mesh(this._shapedTube(upperCurve, 32, 0.024, 12, lipProfile, 0.75), this.lipMat);
       this.mouthGroup.add(this.upperLipMesh);
 
       // Lower lip curve (meets upper lip flush when openAmt=0; drops smoothly to expose open oral cavity!)
@@ -888,8 +1054,10 @@ window.CNScene3D = (function () {
         new THREE.Vector3(lx, ly - 0.004, 0.024)
       ];
       const lowerCurve = new THREE.CatmullRomCurve3(lowerPts);
-      this.lowerLipMesh = new THREE.Mesh(new THREE.TubeGeometry(lowerCurve, 22, 0.023, 10, false), this.lipMat);
+      this.lowerLipMesh = new THREE.Mesh(this._shapedTube(lowerCurve, 32, 0.029, 12, lipProfile, 0.75), this.lipMat);
       this.mouthGroup.add(this.lowerLipMesh);
+
+      this._updateMouthCover(upperCurve, lowerCurve, rx, lx);
     }
 
     _buildDermatomeMarkers() {
@@ -1660,7 +1828,8 @@ window.CNScene3D = (function () {
         const mild7 = isRight ? p.rightCN7_mild : p.leftCN7_mild;
         const blink = isRight ? m.blinkRight : m.blinkLeft;
 
-        let openAngle = -0.92 - Math.max(0, this.targetGaze.y) * 0.14 + Math.max(0, -this.targetGaze.y) * 0.22;
+        // Lid follows the eye: lifts in upgaze, lowers in downgaze
+        let openAngle = -0.50 - Math.max(0, this.targetGaze.y) * 0.42 + Math.max(0, -this.targetGaze.y) * 0.22;
         if (ptosis > 0 && !lifted) openAngle = THREE.MathUtils.lerp(openAngle, -0.06, ptosis);
         if (lifted) openAngle = -1.04;
         if (m.squeezeEyes > 0.1) {
@@ -1704,12 +1873,11 @@ window.CNScene3D = (function () {
       }
 
       // Nasolabial folds
-      this.nlfRight.material.opacity = (1 - rFaceWeak * 0.85) * (0.22 + m.smile * 0.35);
-      this.nlfLeft.material.opacity = (1 - lFaceWeak * 0.85) * (0.22 + m.smile * 0.35);
+      this.nlfRight.material.opacity = (1 - rFaceWeak * 0.85) * (0.10 + m.smile * 0.35);
+      this.nlfLeft.material.opacity = (1 - lFaceWeak * 0.85) * (0.10 + m.smile * 0.35);
 
       // Show illuminated oral cavity (palate, uvula, teeth, tongue) cleanly when mouth opens!
       const isOpen = this._curJawOpen > 0.14;
-      this.closedSlit.visible = !isOpen;
       this.oralInterior.visible = isOpen;
       this.oralLight.intensity = THREE.MathUtils.lerp(this.oralLight.intensity, isOpen ? 1.5 : 0, lerpF);
 
@@ -1777,6 +1945,8 @@ window.CNScene3D = (function () {
         sm.opacity = THREE.MathUtils.lerp(sm.opacity, targetOpacity, Math.min(1, dt * 8));
         sm.depthWrite = sm.opacity > 0.65;
       }
+      // The mouth cover overlaps the head; while the skin is translucent its outline would show.
+      if (this.mouthCover) this.mouthCover.visible = this.headSkinMat.opacity > 0.9;
     }
 
     _updateCamera(dt) {

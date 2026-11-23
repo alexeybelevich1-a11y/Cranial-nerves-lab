@@ -31,5 +31,6 @@ A zero-build, pure client-side 3D medical simulator built with HTML, CSS, vanill
 
 ## Done
 - HINTS exam (head impulse with catch-up saccade, unidirectional vs direction-changing nystagmus, test of skew with occluder) + cases 11–12.
+- More natural face: warm skin lighting, almond eyelid fissure, sculpted nose, tapered lips with a seamless skin cover over the oral cavity (no dark ring around the mouth).
 - Three.js bundled locally (`js/vendor/three.min.js`) — runs fully offline.
 - Clinical content review: imaging for all acute CN III palsies, INO localized to MLF, ONTT steroid nuance, consistent pupil sizes, incomitant CN VI deviation.
