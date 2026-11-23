@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroSim 3D — Cranial Nerve Exam & Ocular Motility Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="js/vendor/three.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header & Mode Tabs -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">🧠</div>
+        <div>
+          <h1>NeuroSim 3D</h1>
+          <span class="subtitle">Cranial Nerve Exam &amp; Eye Muscle Mastery Simulator</span>
+        </div>
+      </div>
+
+      <nav class="mode-tabs" role="tablist">
+        <button class="mode-tab active" data-mode="guided" role="tab">
+          <span class="tab-num">1</span> Guided CN I–XII
+        </button>
+        <button class="mode-tab" data-mode="eyelab" role="tab">
+          <span class="tab-num">2</span> Eye Muscle Lab
+        </button>
+        <button class="mode-tab" data-mode="drills" role="tab">
+          <span class="tab-num">3</span> Order &amp; Memory
+        </button>
+        <button class="mode-tab" data-mode="cases" role="tab">
+          <span class="tab-num">4</span> Clinical Cases
+          <span class="badge-pill" id="casesSolvedBadge">0/12</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Split Workspace -->
+    <main class="workspace">
+      <!-- 3D Interactive Patient Stage -->
+      <section class="stage-column">
+        <div class="viewport-wrap">
+          <div id="scene3dContainer" class="scene-container"></div>
+
+          <!-- Anatomical Orientation Indicator (Examiner View) -->
+          <div class="hud-top-left">
+            <div class="side-pill side-right">← Patient RIGHT (OD)</div>
+            <div class="side-pill side-left">Patient LEFT (OS) →</div>
+          </div>
+
+          <!-- Live Clinical Telemetry HUD -->
+          <div class="hud-top-right">
+            <div class="telemetry-chip">
+              <span class="t-label">Pupils</span>
+              <span class="t-val">OD <strong id="hudPupilR">3.5</strong>mm · OS <strong id="hudPupilL">3.5</strong>mm</span>
+            </div>
+            <div class="telemetry-chip">
+              <span class="t-label">Head Tilt</span>
+              <span class="t-val" id="hudHeadTilt">0° Neutral</span>
+            </div>
+            <div class="telemetry-chip" id="hudActiveCasePill" style="display:none;">
+              <span class="t-label">Active Mode</span>
+              <span class="t-val text-amber" id="hudActiveStatus">Case Blind Exam</span>
+            </div>
+          </div>
+
+          <!-- Floating Clinical Finding Toast -->
+          <div id="findingToast" class="finding-toast hidden">
+            <div class="toast-header">
+              <span id="toastTitle">Exam Observation</span>
+              <button id="toastClose" class="icon-btn" title="Dismiss">✕</button>
+            </div>
+            <p id="toastBody"></p>
+          </div>
+
+          <!-- Bottom Camera & X-Ray Controls -->
+          <div class="hud-bottom-bar">
+            <div class="hud-group">
+              <button class="hud-btn active" data-cam="front" title="Full Face View">Front</button>
+              <button class="hud-btn" data-cam="eyes" title="Close-up Ocular Motility & Pupils">Eyes</button>
+              <button class="hud-btn xray-btn" id="btnToggleXray" title="Toggle 3D Orbital Extraocular Muscles X-Ray">⚡ 3D Muscles X-Ray</button>
+              <button class="hud-btn" data-cam="mouth" title="Oropharynx, Palate & Tongue">Mouth</button>
+              <button class="hud-btn" data-cam="neck" title="Neck SCM & Shoulders">Neck</button>
+            </div>
+
+            <div class="hud-group">
+              <button class="hud-btn tool-btn active" data-tool="finger" title="Drag on patient to guide eye gaze (H-Test)">🎯 Target</button>
+              <button class="hud-btn tool-btn" data-tool="penlight" title="Drag or swing penlight between OD and OS">🔦 Penlight</button>
+              <button class="hud-btn tool-btn" data-tool="orbit" title="Drag to rotate 3D camera freely">🔄 Orbit</button>
+            </div>
+
+            <div class="hud-group">
+              <button class="hud-btn" id="btnAutoH" title="Trace full H-pattern automatically">▶ Auto H-Test</button>
+              <button class="hud-btn" id="btnConvergence" title="Move target toward nose bridge to test convergence">◎ Converge</button>
+              <button class="hud-btn" id="btnSwingLight" title="Swinging Flashlight Test for RAPD (Marcus Gunn)">↔ Swing Light</button>
+              <button class="hud-btn" id="btnLiftRLid" title="Examiner lifts patient's right upper eyelid">Lift R Lid</button>
+              <button class="hud-btn" id="btnLiftLLid" title="Examiner lifts patient's left upper eyelid">Lift L Lid</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compact Quick Exam Strip Below 3D Stage -->
+        <div class="quick-strip">
+          <div class="strip-section">
+            <span class="strip-label">9-Gaze Pad</span>
+            <div class="gaze-grid" id="gazeGrid">
+              <button data-gx="-1" data-gy="1" title="Up & Right (OD: SR | OS: IO)">↖</button>
+              <button data-gx="0" data-gy="1" title="Straight Up">↑</button>
+              <button data-gx="1" data-gy="1" title="Up & Left (OD: IO | OS: SR)">↗</button>
+              <button data-gx="-1" data-gy="0" title="Right Gaze (OD: LR | OS: MR)">←</button>
+              <button data-gx="0" data-gy="0" class="center-dot" title="Primary Gaze">●</button>
+              <button data-gx="1" data-gy="0" title="Left Gaze (OD: MR | OS: LR)">→</button>
+              <button data-gx="-1" data-gy="-1" title="Down & Right (OD: IR | OS: SO)">↙</button>
+              <button data-gx="0" data-gy="-1" title="Straight Down">↓</button>
+              <button data-gx="1" data-gy="-1" title="Down & Left (OD: SO | OS: IR)">↘</button>
+            </div>
+          </div>
+
+          <div class="strip-section tilt-section">
+            <div class="tilt-header">
+              <span class="strip-label">Bielschowsky Head Tilt</span>
+              <button class="mini-link" id="btnResetTilt">Reset 0°</button>
+            </div>
+            <div class="tilt-controls">
+              <span class="tilt-end">R Tilt</span>
+              <input type="range" id="headTiltSlider" min="-24" max="24" value="0" step="1" />
+              <span class="tilt-end">L Tilt</span>
+            </div>
+          </div>
+
+          <div class="strip-section maneuvers-section">
+            <span class="strip-label">Bedside Maneuvers (CN I–XII)</span>
+            <div class="maneuver-chips">
+              <button class="m-chip" data-maneuver="smell">CN I Smell</button>
+              <button class="m-chip" data-maneuver="fields">CN II Fields &amp; Fundus</button>
+              <button class="m-chip" data-maneuver="v_sensory">CN V Touch</button>
+              <button class="m-chip" data-maneuver="corneal_right">Corneal R</button>
+              <button class="m-chip" data-maneuver="corneal_left">Corneal L</button>
+              <button class="m-chip" data-maneuver="jaw_open">CN V Jaw</button>
+              <button class="m-chip" data-maneuver="raise_brows">CN VII Brows</button>
+              <button class="m-chip" data-maneuver="close_eyes">CN VII Close Eyes</button>
+              <button class="m-chip" data-maneuver="smile_test">CN VII Smile</button>
+              <button class="m-chip" data-maneuver="weber_rinne">CN VIII Weber/Rinne</button>
+              <button class="m-chip" data-maneuver="hit_right">HINTS Impulse R</button>
+              <button class="m-chip" data-maneuver="hit_left">HINTS Impulse L</button>
+              <button class="m-chip" data-maneuver="hints_nystagmus">HINTS Nystagmus</button>
+              <button class="m-chip" data-maneuver="cover_alt">HINTS Alt Cover</button>
+              <button class="m-chip" data-maneuver="uncover">Uncover</button>
+              <button class="m-chip" data-maneuver="say_ahh">CN IX/X "Ahh"</button>
+              <button class="m-chip" data-maneuver="head_turn_left">CN XI Turn L (R SCM)</button>
+              <button class="m-chip" data-maneuver="head_turn_right">CN XI Turn R (L SCM)</button>
+              <button class="m-chip" data-maneuver="shrug_shoulders">CN XI Shrug</button>
+              <button class="m-chip" data-maneuver="tongue_out">CN XII Tongue</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Context-Aware Clinical Workbench -->
+      <aside class="panel-column" id="rightPanel"></aside>
+    </main>
+  </div>
+
+  <!-- Scripts (classic script tags so index.html works seamlessly via both file:// and http://) -->
+  <script src="js/data.js"></script>
+  <script src="js/scene3d.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
